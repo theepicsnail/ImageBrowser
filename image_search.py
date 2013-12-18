@@ -11,7 +11,7 @@ def search(image_url):
         headers['User-Agent'] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"
         response = requests.get("https://www.google.com/searchbyimage?image_url=" + image_url, headers=headers)
         data = response.text
-        file(cache_file,"w").write(data.encode('utf8'))
+        file = open(cache_file,"wb").write(data.encode('utf8'))
 
     result_partition = data.split("Pages that include")
     if len(result_partition) != 2:
