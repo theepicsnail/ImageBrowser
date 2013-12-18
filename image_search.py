@@ -29,5 +29,5 @@ def search(image_url):
 if __name__ == "__main__":
     image_url = "http://i0.kym-cdn.com/photos/images/original/000/000/130/disaster-girl.jpg"
     for url in search(image_url):
-        print url
+        print(url)
 
