@@ -1,0 +1,18 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="image_search.js"></script>
+<script src="main.js"></script>
+</head>
+<body>
+    <form method="GET" action="">
+    Enter image url: <input type="text" name="query"><br>
+    <input type="submit" value="Submit">
+    </form>
+    {% if results %}
+        {% for url in results %}
+            <p>{{url}}</p>
+        {% end %}
+    {% end %}
+</body>
+</html>
