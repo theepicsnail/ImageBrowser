@@ -1,5 +1,7 @@
 import os
 import requests
+import urllib3
+import bs4
 
 
 def search(image_url):
@@ -24,10 +26,18 @@ def search(image_url):
     return out
 
 
+def get_images(url):
+    http = urllib3.PoolManager()
+    headers = {}
+    headers['User-Agent'] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"
+    response = http.request("GET", url, headers=headers)
+    soup = bs4.BeautifulSoup(response.data)
+    return soup.find_all("img")
 
 
 if __name__ == "__main__":
     image_url = "http://i0.kym-cdn.com/photos/images/original/000/000/130/disaster-girl.jpg"
     for url in search(image_url):
-        print(url)
+        print(get_images(url))
 
+    
