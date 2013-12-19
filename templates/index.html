@@ -10,8 +10,13 @@
     <input type="submit" value="Submit">
     </form>
     {% if results %}
-        {% for url in results %}
-            <p>{{url}}</p>
+        {% for key in results %}
+            <a href="{{key}}">{{key}}</a>
+            <ul>
+            {% for img in results[key] %}
+                <li><img src="{{img}}">{{img}}</li>
+            {% end %}
+            </ul>
         {% end %}
     {% end %}
 </body>

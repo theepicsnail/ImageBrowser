@@ -8,10 +8,8 @@ import tornado.options
 import tornado.web
 import tornado.httpclient
 import unicodedata
-import urllib3
 import bs4
 import urllib
-import requests
 
 from tornado.options import define, options
 
@@ -43,7 +41,11 @@ class IndexHandler(tornado.web.RequestHandler):
     def get(self):
         self.query = self.get_argument("query", default=None)
         if self.query:
-            results = self.__search()
+            self.http = tornado.httpclient.HTTPClient()
+            self.headers = {}
+            self.headers['User-Agent'] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"
+            urls = self.__search()
+            results = self.__get_images(urls)
             self.render("index.html", results=results)
         self.render("index.html", results=False)
 
@@ -52,14 +54,9 @@ class IndexHandler(tornado.web.RequestHandler):
         if os.path.exists(cache_file):
             data = file(cache_file).read().decode('utf8')
         else:
-            http = tornado.httpclient.HTTPClient()
-            headers = {}
-            headers[
-                'User-Agent'] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"
-            req = tornado.httpclient.HTTPRequest("https://www.google.com/searchbyimage?image_url=" + self.query, headers=headers)
-            response = http.fetch(req)
+            req = tornado.httpclient.HTTPRequest("https://www.google.com/searchbyimage?image_url=" + self.query, headers=self.headers)
+            response = self.http.fetch(req)
             data = str(response.body)
-            print(type(data))
             file = open(cache_file, "wb").write(data.encode('utf8'))
 
         result_partition = data.split("Pages that include")
@@ -73,17 +70,18 @@ class IndexHandler(tornado.web.RequestHandler):
         return out
 
     # returns a list of image elements from a url
-    def __get_images(self, url):
-        http = urllib3.PoolManager()
-        headers = {}
-        headers[
-            'User-Agent'] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"
-        response = http.request("GET", url, headers=headers)
-        soup = bs4.BeautifulSoup(response.data)
-        img_urls = []
-        for img in soup.find_all("img", src=True):
-            img_urls.append(urllib.parse.urljoin(url, img['src']))
-        return img_urls
+    def __get_images(self, urls):
+        #dict holding url as the keys
+        imgs = {}
+        for url in urls:
+            req = tornado.httpclient.HTTPRequest(url, headers=self.headers)
+            response = self.http.fetch(req)
+            soup = bs4.BeautifulSoup(response.body)
+            imgs[url] = []
+            for img in soup.find_all("img", src=True):
+                imgs[url].append(urllib.parse.urljoin(url, img['src']))
+        print(imgs)
+        return imgs
 
 
 def main():
