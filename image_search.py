@@ -2,6 +2,7 @@ import os
 import requests
 import urllib3
 import bs4
+import urllib
 
 
 def search(image_url):
@@ -37,10 +38,10 @@ def get_images(url):
     response = http.request("GET", url, headers=headers)
     soup = bs4.BeautifulSoup(response.data)
     img_urls = []
-    for img in soup.find_all("img"):
-        if img['src']:
-            img_urls.append(img['src'])
+    for img in soup.find_all("img", src=True):
+        img_urls.append(urllib.parse.urljoin(url, img['src']))
     return img_urls
+
 
 
 if __name__ == "__main__":
