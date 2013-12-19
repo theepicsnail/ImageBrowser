@@ -52,12 +52,14 @@ class IndexHandler(tornado.web.RequestHandler):
         if os.path.exists(cache_file):
             data = file(cache_file).read().decode('utf8')
         else:
+            http = tornado.httpclient.HTTPClient()
             headers = {}
             headers[
                 'User-Agent'] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"
-            req = "https://www.google.com/searchbyimage?image_url=" + self.query
-            response = requests.get(req, headers=headers)
-            data = response.text
+            req = tornado.httpclient.HTTPRequest("https://www.google.com/searchbyimage?image_url=" + self.query, headers=headers)
+            response = http.fetch(req)
+            data = str(response.body)
+            print(type(data))
             file = open(cache_file, "wb").write(data.encode('utf8'))
 
         result_partition = data.split("Pages that include")
