@@ -13,7 +13,6 @@ if not os.path.exists(CACHE_DIR):
 def get_url_data(url):
     cache_file = os.path.join(CACHE_DIR, "C%s.html" % hash(url))
     if os.path.exists(cache_file):
-	print "Found in cache"
         data = file(cache_file).read()
     else:
         headers = {}
@@ -27,16 +26,12 @@ def search(image_url):
     data = get_url_data("https://www.google.com/searchbyimage?image_url=" + image_url)
     result_partition = data.split("Pages that include")
     if len(result_partition) != 2:
-	print "Pages that include was not found"
         return []
     data = result_partition[1]
     link_blobs = data.split('"r"><a href="')
     out = []
-    print "Link blob partitions:", len(link_blobs)
     for blob in link_blobs[1:]:
         out.append(blob.split('"')[0])
-    print "Returning"
-    print out
     return out
 
 def scrape(url):
