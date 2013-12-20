@@ -1,4 +1,3 @@
-import webbrowser
 import SimpleHTTPServer
 import SocketServer
 import urllib
@@ -24,6 +23,5 @@ httpd = SocketServer.ThreadingTCPServer(("",0), Server)
 
 PORT = httpd.socket.getsockname()[1]
 image = "http://www.freefever.com/stock/rainbow-abstract-background-free.jpg"
-webbrowser.open("http://127.0.0.1:%s/#%s" % (PORT, image))
-print "Serving on port", PORT
+print "Serving at:", "http://127.0.0.1:%s/" % PORT
 httpd.serve_forever()
