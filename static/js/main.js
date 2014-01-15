@@ -1,7 +1,8 @@
 $(function() {
   // Get the image url from the location's hash
-  
-
+  var urls = JSON.parse({{results}});
+  console.log(urls);
+  console.log("hi");
   // Search by that url
   // For each of the returned urls:
   //   Get that page

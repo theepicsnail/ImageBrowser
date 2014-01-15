@@ -44,8 +44,8 @@ class IndexHandler(tornado.web.RequestHandler):
         self.query = self.get_argument("query", default=None)
         if self.query:
             results = self.__search()
-            self.render("test.html", results=results)
-        self.render("test.html", results=False)
+            self.render("index.html", results=results)
+        self.render("index.html", results=False)
 
     def __search(self):
         if r.exists(self.query):
